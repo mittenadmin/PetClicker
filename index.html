@@ -389,16 +389,210 @@
             padding-top: env(safe-area-inset-top, 0);
         }
 
-        /* Standalone mode optimizations */
-        @media (display-mode: standalone) {
-            body {
-                padding-top: env(safe-area-inset-top, 0);
-                padding-bottom: env(safe-area-inset-bottom, 0);
-            }
-            
-            .container {
-                min-height: calc(100vh - env(safe-area-inset-top, 0) - env(safe-area-inset-bottom, 0));
-            }
+        /* Settings Panel Styles */
+        .settings-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .settings-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .settings-panel {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 24px;
+            width: min(400px, 90vw);
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .settings-overlay.active .settings-panel {
+            transform: translateY(0);
+        }
+
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .settings-title {
+            font-size: var(--text-xl);
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--gray-400);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .close-button:hover {
+            background: var(--gray-100);
+            color: var(--gray-600);
+        }
+
+        .settings-section {
+            margin-bottom: 24px;
+        }
+
+        .settings-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-title {
+            font-size: var(--text-lg);
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 12px;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .setting-label {
+            flex: 1;
+            margin-right: 16px;
+        }
+
+        .setting-name {
+            font-weight: 500;
+            color: var(--gray-900);
+            margin-bottom: 2px;
+        }
+
+        .setting-description {
+            font-size: var(--text-sm);
+            color: var(--gray-600);
+        }
+
+        .setting-control {
+            flex-shrink: 0;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            background: var(--gray-300);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: var(--primary-blue);
+        }
+
+        .toggle-switch::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: var(--white);
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .toggle-switch.active::before {
+            transform: translateX(20px);
+        }
+
+        .action-button {
+            background: var(--primary-blue);
+            color: var(--white);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: var(--text-sm);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .action-button:hover {
+            background: var(--primary-blue-dark);
+        }
+
+        .action-button.secondary {
+            background: var(--gray-100);
+            color: var(--gray-700);
+        }
+
+        .action-button.secondary:hover {
+            background: var(--gray-200);
+        }
+
+        .action-button.danger {
+            background: var(--error-red);
+        }
+
+        .action-button.danger:hover {
+            background: #D32F2F;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .info-card {
+            background: var(--gray-50);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .info-value {
+            font-size: var(--text-lg);
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+
+        .info-label {
+            font-size: var(--text-xs);
+            color: var(--gray-600);
+            margin-top: 4px;
         }
 
         /* Ripple Effect */
@@ -741,6 +935,204 @@
                 </div>
             </div>
         </main>
+
+        <!-- Settings Panel -->
+        <div id="settings-overlay" class="settings-overlay">
+            <div class="settings-panel">
+                <div class="settings-header">
+                    <h2 class="settings-title">Settings</h2>
+                    <button id="close-settings" class="close-button" aria-label="Close settings">×</button>
+                </div>
+
+                <!-- Audio Settings -->
+                <div class="settings-section">
+                    <h3 class="section-title">Audio Settings</h3>
+                    
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-name">Master Volume</div>
+                            <div class="setting-description">Overall clicker volume</div>
+                        </div>
+                        <div class="setting-control">
+                            <input 
+                                type="range" 
+                                id="settings-volume" 
+                                min="0" 
+                                max="1" 
+                                step="0.1" 
+                                value="0.8"
+                                style="width: 100px;"
+                            >
+                            <span id="settings-volume-value">80%</span>
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-name">Clicker Type</div>
+                            <div class="setting-description">Sound characteristics</div>
+                        </div>
+                        <div class="setting-control">
+                            <select id="settings-sound" style="padding: 4px 8px; border-radius: 4px;">
+                                <option value="metal">Metal (Sharp)</option>
+                                <option value="plastic">Plastic (Soft)</option>
+                                <option value="box">Box (Loud)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-name">Audio Engine</div>
+                            <div class="setting-description">Current audio system</div>
+                        </div>
+                        <div class="setting-control">
+                            <span id="audio-engine-info" class="info-value">Web Audio API</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Accessibility Settings -->
+                <div class="settings-section">
+                    <h3 class="section-title">Accessibility</h3>
+                    
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-name">Haptic Feedback</div>
+                            <div class="setting-description">Vibration on button press</div>
+                        </div>
+                        <div class="setting-control">
+                            <div id="haptic-toggle" class="toggle-switch active"></div>
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-name">Screen Reader</div>
+                            <div class="setting-description">Voice announcements</div>
+                        </div>
+                        <div class="setting-control">
+                            <div id="screenreader-toggle" class="toggle-switch active"></div>
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-name">Performance Display</div>
+                            <div class="setting-description">Show latency information</div>
+                        </div>
+                        <div class="setting-control">
+                            <div id="performance-toggle" class="toggle-switch active"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics -->
+                <div class="settings-section">
+                    <h3 class="section-title">Session Statistics</h3>
+                    
+                    <div class="info-grid">
+                        <div class="info-card">
+                            <div id="total-clicks" class="info-value">0</div>
+                            <div class="info-label">Total Clicks</div>
+                        </div>
+                        <div class="info-card">
+                            <div id="avg-latency" class="info-value">--ms</div>
+                            <div class="info-label">Avg Latency</div>
+                        </div>
+                        <div class="info-card">
+                            <div id="session-time" class="info-value">0m</div>
+                            <div class="info-label">Session Time</div>
+                        </div>
+                        <div class="info-card">
+                            <div id="clicks-per-min" class="info-value">0</div>
+                            <div class="info-label">Clicks/Min</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Management -->
+                <div class="settings-section">
+                    <h3 class="section-title">Data Management</h3>
+                    
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-name">Export Settings</div>
+                            <div class="setting-description">Download backup file</div>
+                        </div>
+                        <div class="setting-control">
+                            <button id="export-settings" class="action-button">Export</button>
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-name">Import Settings</div>
+                            <div class="setting-description">Restore from backup</div>
+                        </div>
+                        <div class="setting-control">
+                            <input type="file" id="import-file" accept=".json" style="display: none;">
+                            <button id="import-settings" class="action-button secondary">Import</button>
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-name">Reset Counter</div>
+                            <div class="setting-description">Clear click count only</div>
+                        </div>
+                        <div class="setting-control">
+                            <button id="reset-counter" class="action-button secondary">Reset</button>
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-name">Reset All Data</div>
+                            <div class="setting-description">Clear everything</div>
+                        </div>
+                        <div class="setting-control">
+                            <button id="reset-all" class="action-button danger">Reset All</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- App Information -->
+                <div class="settings-section">
+                    <h3 class="section-title">App Information</h3>
+                    
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-name">Version</div>
+                            <div class="setting-description">App version</div>
+                        </div>
+                        <div class="setting-control">
+                            <span class="info-value">1.0.0</span>
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-name">Installation</div>
+                            <div class="setting-description">App install status</div>
+                        </div>
+                        <div class="setting-control">
+                            <span id="install-status" class="info-value">Browser</span>
+                        </div>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-label">
+                            <div class="setting-name">Storage Used</div>
+                            <div class="setting-description">Cache and settings</div>
+                        </div>
+                        <div class="setting-control">
+                            <span id="storage-info" class="info-value">--KB</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Status Panel -->
         <div class="status-panel">
@@ -1734,6 +2126,7 @@
             }
 
             async init() {
+                this.sessionStartTime = Date.now();
                 this.setupElements();
                 this.bindEnhancedEvents();
                 this.updateDisplay();
@@ -1749,6 +2142,9 @@
                 
                 // Load saved settings
                 this.loadSettings();
+                
+                // Apply settings
+                this.applySettings();
                 
                 this.announceToScreenReader('Pet training clicker ready');
             }
@@ -1921,6 +2317,11 @@
                     }, 100);
                 });
 
+                // Settings button
+                document.getElementById('settings-button').addEventListener('click', () => {
+                    this.openSettings();
+                });
+
                 // Enhanced keyboard shortcuts
                 document.addEventListener('keydown', (e) => {
                     this.handleKeyboard(e);
@@ -1928,6 +2329,237 @@
 
                 // Prevent zoom on double tap
                 this.preventDoubleZoom();
+
+                // Setup settings panel events
+                this.setupSettingsEvents();
+            }
+
+            setupSettingsEvents() {
+                const settingsOverlay = document.getElementById('settings-overlay');
+                const closeButton = document.getElementById('close-settings');
+
+                // Close settings
+                closeButton.addEventListener('click', () => {
+                    this.closeSettings();
+                });
+
+                // Close on overlay click
+                settingsOverlay.addEventListener('click', (e) => {
+                    if (e.target === settingsOverlay) {
+                        this.closeSettings();
+                    }
+                });
+
+                // Close on escape key
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && settingsOverlay.classList.contains('active')) {
+                        this.closeSettings();
+                    }
+                });
+
+                // Settings volume control
+                const settingsVolumeSlider = document.getElementById('settings-volume');
+                const settingsVolumeValue = document.getElementById('settings-volume-value');
+                
+                settingsVolumeSlider.addEventListener('input', (e) => {
+                    const volume = parseFloat(e.target.value);
+                    this.volume = volume;
+                    this.volumeSlider.value = volume;
+                    this.audioEngine.setVolume(volume);
+                    this.updateVolumeDisplay();
+                    settingsVolumeValue.textContent = Math.round(volume * 100) + '%';
+                });
+
+                // Settings sound selector
+                const settingsSoundSelector = document.getElementById('settings-sound');
+                settingsSoundSelector.addEventListener('change', (e) => {
+                    this.selectedSound = e.target.value;
+                    this.soundSelector.value = e.target.value;
+                    this.audioEngine.setSelectedSound(this.selectedSound);
+                    
+                    // Play preview
+                    setTimeout(() => {
+                        this.audioEngine.playClick();
+                    }, 100);
+                });
+
+                // Toggle switches
+                this.setupToggleSwitch('haptic-toggle', 'hapticEnabled', true);
+                this.setupToggleSwitch('screenreader-toggle', 'screenReaderEnabled', true);
+                this.setupToggleSwitch('performance-toggle', 'performanceDisplayEnabled', true);
+
+                // Action buttons
+                document.getElementById('export-settings').addEventListener('click', () => {
+                    this.exportSettings();
+                });
+
+                document.getElementById('import-settings').addEventListener('click', () => {
+                    document.getElementById('import-file').click();
+                });
+
+                document.getElementById('import-file').addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        this.importSettings(file);
+                        e.target.value = ''; // Reset file input
+                    }
+                });
+
+                document.getElementById('reset-counter').addEventListener('click', () => {
+                    if (confirm('Reset click counter to zero?')) {
+                        this.clickCount = 0;
+                        this.updateDisplay();
+                        this.updateSettingsStats();
+                        this.saveSettings();
+                        this.announceToScreenReader('Click counter reset');
+                    }
+                });
+
+                document.getElementById('reset-all').addEventListener('click', () => {
+                    this.resetAllData();
+                });
+            }
+
+            setupToggleSwitch(toggleId, settingKey, defaultValue) {
+                const toggle = document.getElementById(toggleId);
+                let isEnabled = this.getSetting(settingKey, defaultValue);
+                
+                // Set initial state
+                toggle.classList.toggle('active', isEnabled);
+                
+                toggle.addEventListener('click', () => {
+                    isEnabled = !isEnabled;
+                    toggle.classList.toggle('active', isEnabled);
+                    this.setSetting(settingKey, isEnabled);
+                    
+                    // Apply setting immediately
+                    this.applySettings();
+                });
+            }
+
+            openSettings() {
+                const settingsOverlay = document.getElementById('settings-overlay');
+                settingsOverlay.classList.add('active');
+                
+                // Update settings values
+                this.updateSettingsPanel();
+                
+                // Focus close button for accessibility
+                setTimeout(() => {
+                    document.getElementById('close-settings').focus();
+                }, 100);
+                
+                this.announceToScreenReader('Settings opened');
+            }
+
+            closeSettings() {
+                const settingsOverlay = document.getElementById('settings-overlay');
+                settingsOverlay.classList.remove('active');
+                
+                // Return focus to settings button
+                document.getElementById('settings-button').focus();
+                
+                this.announceToScreenReader('Settings closed');
+            }
+
+            updateSettingsPanel() {
+                // Update volume controls
+                const settingsVolumeSlider = document.getElementById('settings-volume');
+                const settingsVolumeValue = document.getElementById('settings-volume-value');
+                settingsVolumeSlider.value = this.volume;
+                settingsVolumeValue.textContent = Math.round(this.volume * 100) + '%';
+
+                // Update sound selector
+                document.getElementById('settings-sound').value = this.selectedSound;
+
+                // Update audio engine info
+                const audioEngineInfo = document.getElementById('audio-engine-info');
+                if (this.audioEngine.useHTML5Fallback) {
+                    audioEngineInfo.textContent = 'HTML5 Audio';
+                    audioEngineInfo.className = 'info-value status-warning';
+                } else {
+                    audioEngineInfo.textContent = 'Web Audio API';
+                    audioEngineInfo.className = 'info-value status-good';
+                }
+
+                // Update installation status
+                const installStatus = document.getElementById('install-status');
+                if (this.pwaManager.isInstalled) {
+                    installStatus.textContent = 'Installed';
+                    installStatus.className = 'info-value status-good';
+                } else {
+                    installStatus.textContent = 'Browser';
+                    installStatus.className = 'info-value';
+                }
+
+                // Update statistics
+                this.updateSettingsStats();
+
+                // Update storage info
+                this.updateStorageInfo();
+            }
+
+            updateSettingsStats() {
+                const sessionStartTime = this.sessionStartTime || Date.now();
+                const sessionDuration = Math.round((Date.now() - sessionStartTime) / 60000); // minutes
+                const clicksPerMin = sessionDuration > 0 ? Math.round(this.clickCount / sessionDuration) : 0;
+
+                document.getElementById('total-clicks').textContent = this.clickCount;
+                document.getElementById('avg-latency').textContent = 
+                    this.getAverageLatency() > 0 ? this.getAverageLatency().toFixed(1) + 'ms' : '--ms';
+                document.getElementById('session-time').textContent = sessionDuration + 'm';
+                document.getElementById('clicks-per-min').textContent = clicksPerMin;
+            }
+
+            async updateStorageInfo() {
+                try {
+                    const cacheSize = await this.pwaManager.getCacheSize();
+                    const storageInfo = document.getElementById('storage-info');
+                    
+                    if (cacheSize) {
+                        storageInfo.textContent = cacheSize.usageInMB.toFixed(1) + 'MB';
+                    } else {
+                        storageInfo.textContent = '--KB';
+                    }
+                } catch (error) {
+                    document.getElementById('storage-info').textContent = '--KB';
+                }
+            }
+
+            getSetting(key, defaultValue) {
+                try {
+                    const settings = JSON.parse(localStorage.getItem('pet-clicker-settings') || '{}');
+                    return settings[key] !== undefined ? settings[key] : defaultValue;
+                } catch {
+                    return defaultValue;
+                }
+            }
+
+            setSetting(key, value) {
+                try {
+                    const settings = JSON.parse(localStorage.getItem('pet-clicker-settings') || '{}');
+                    settings[key] = value;
+                    localStorage.setItem('pet-clicker-settings', JSON.stringify(settings));
+                } catch (error) {
+                    console.warn('Could not save setting:', error);
+                }
+            }
+
+            applySettings() {
+                // Apply haptic setting
+                const hapticEnabled = this.getSetting('hapticEnabled', true);
+                this.mobileOptimizer.hapticSupported = hapticEnabled && 'vibrate' in navigator;
+
+                // Apply screen reader setting
+                const screenReaderEnabled = this.getSetting('screenReaderEnabled', true);
+                this.screenReaderEnabled = screenReaderEnabled;
+
+                // Apply performance display setting
+                const performanceEnabled = this.getSetting('performanceDisplayEnabled', true);
+                const statusPanel = document.querySelector('.status-panel');
+                if (statusPanel) {
+                    statusPanel.style.display = performanceEnabled ? 'flex' : 'none';
+                }
             }
 
             handleEnhancedTouchStart(event) {
